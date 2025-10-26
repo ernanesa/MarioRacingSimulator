@@ -78,8 +78,8 @@ async function playRaceEngine(character1, character2) {
             let totalTestSkill2 = diceResult2 + character2.POWER;
 
             console.log(`${character1.NAME} CONFRONTED ${character2.NAME}! 🥊`)
-            await logRollResult(character1.NAME, blocks.POWER, diceResult1, character1.POWER);
-            await logRollResult(character2.NAME, blocks.POWER, diceResult2, character2.POWER);
+            await logRollResult(character1.NAME, blocks.BATTLE, diceResult1, character1.POWER);
+            await logRollResult(character2.NAME, blocks.BATTLE, diceResult2, character2.POWER);
 
             // quick battle visualization
             await spinner('Clashing');
@@ -92,7 +92,7 @@ async function playRaceEngine(character1, character2) {
 
                 if (character2.SCORE > 0) {
                     character2.SCORE--;
-                    console.log(`${character2.NAME} losted 1 point. 🐢`)
+                    console.log(`${character2.NAME} lost 1 point. 🐢`)
                 }
             }
             else if (totalTestSkill2 > totalTestSkill1) {
@@ -100,7 +100,7 @@ async function playRaceEngine(character1, character2) {
 
                 if (character1.SCORE > 0) {
                     character1.SCORE--;
-                    console.log(`${character1.NAME} losted 1 point. 🐢`)
+                    console.log(`${character1.NAME} lost 1 point. 🐢`)
                 }
             }
             else if (totalTestSkill1 === totalTestSkill2) {
@@ -129,7 +129,7 @@ async function playRaceEngine(character1, character2) {
 
     console.log("\n---------------------\n")
     if (character1.SCORE > character2.SCORE) {
-        console.log(`\Winner ${character1.NAME} 🏆.`)
+        console.log(`\nWinner ${character1.NAME} 🏆.`)
         console.log(`${character1.NAME} score ${character1.SCORE}`)
         console.log(`${character2.NAME} score ${character2.SCORE}`)
     }
@@ -143,7 +143,7 @@ async function playRaceEngine(character1, character2) {
     }
 }
 
-async function listCharacteres() {
+async function listCharacters() {
     console.log("\n=============== Characters ===============");
     CHARACTERS.forEach((character, index) => {
         console.log(`${index + 1}. ${character.NAME} (Speed: ${character.SPEED}, Handling: ${character.MANEUVERABILITY}, Power: ${character.POWER})`)
@@ -152,7 +152,7 @@ async function listCharacteres() {
 }
 
 async function choosePlayers() {
-    listCharacteres();
+    listCharacters();
     let player1;
     let player2;
 
@@ -226,7 +226,7 @@ async function main() {
         }
         else if (choice == 1) {
             console.clear();
-            await listCharacteres();
+            await listCharacters();
         }
         else if (choice == 2) {
             console.clear();
