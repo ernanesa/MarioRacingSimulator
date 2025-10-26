@@ -50,11 +50,15 @@ async function choosePlayers() {
 }
 
 async function menu() {
-  console.log("\n=== Mario Racing Simulator ===");
-  console.log("1) Show characters");
-  console.log("2) Select players");
-  console.log("3) Start race");
-  console.log("0) Exit");
+  const border = "═".repeat(36);
+  console.log("\n" + `╔${border}╗`);
+  console.log(`║  🏎️  Mario Racing Simulator          ║`);
+  console.log(`╚${border}╝`);
+  console.log("\nEscolha uma opção:");
+  console.log("  1) 👥  Show characters");
+  console.log("  2) 🎮  Select players");
+  console.log("  3) 🏁  Start race");
+  console.log("  0) 🚪  Exit");
 }
 
 async function main() {
