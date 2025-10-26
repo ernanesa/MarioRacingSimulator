@@ -178,8 +178,8 @@ async function choosePlayers() {
         }
         console.log("Invalid selection. Choose two different valid numbers.");
     }
-    const characterPlayer1 = CHARACTERS[player1];
-    const characterPlayer2 = CHARACTERS[player2];
+    const characterPlayer1 = CHARACTERS[player1 - 1];
+    const characterPlayer2 = CHARACTERS[player2 - 1];
     console.log(`Selected: ${characterPlayer1.NAME} vs ${characterPlayer2.NAME}`)
 
     return [player1, player2];
@@ -231,7 +231,7 @@ async function main() {
                 charactersSelecteds = await choosePlayers();
             }
 
-            await playRaceEngine(CHARACTERS[charactersSelecteds[0]], CHARACTERS[charactersSelecteds[1]])
+            await playRaceEngine(CHARACTERS[charactersSelecteds[0] - 1], CHARACTERS[charactersSelecteds[1] - 1])
         }
         else {
             console.clear();
