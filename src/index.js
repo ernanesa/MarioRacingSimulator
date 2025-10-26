@@ -1,18 +1,12 @@
-const player1 = {
-    NAME: "Mario",
-    SPEED: 4,
-    MANEUVERABILITY: 3,
-    POWER: 3,
-    SCORE: 0
-}
+const CHARACTERS = [
+    { NAME: "Mario", SPEED: 4, MANEUVERABILITY: 3, POWER: 3, SCORE: 0 },
+    { NAME: "Peach", SPEED: 3, MANEUVERABILITY: 4, POWER: 2, SCORE: 0 },
+    { NAME: "Yoshi", SPEED: 2, MANEUVERABILITY: 4, POWER: 3, SCORE: 0 },
+    { NAME: "Bowser", SPEED: 5, MANEUVERABILITY: 2, POWER: 5, SCORE: 0 },
+    { NAME: "Luigi", SPEED: 3, MANEUVERABILITY: 4, POWER: 4, SCORE: 0 },
+    { NAME: "Donkey Kong", SPEED: 2, MANEUVERABILITY: 2, POWER: 5, SCORE: 0 },
+];
 
-const player2 = {
-    NAME: "Luigi",
-    SPEED: 3,
-    MANEUVERABILITY: 4,
-    POWER: 4,
-    SCORE: 0
-}
 
 const blocks = {
     STRAIGHT: "STRAIGHT",
@@ -47,6 +41,8 @@ async function logRollResult(characterName, block, diceResult, attribute) {
 }
 
 async function playRaceEngine(character1, character2) {
+    console.log(`🏁 Race starting between ${character1.NAME} and ${character2.NAME} 🏁`)
+
     for (let round = 1; round <= 5; round++) {
         console.log(`\n🏁 Round ${round} 🏁`)
 
@@ -116,6 +112,10 @@ async function playRaceEngine(character1, character2) {
         }
         else {
         }
+
+        // add random delay between rounds
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+        await delay(1000);
     }
 
     console.log("\n---------------------\n")
@@ -134,9 +134,110 @@ async function playRaceEngine(character1, character2) {
     }
 }
 
+async function listCharacteres() {
+    console.log("\n=============== Characters ===============");
+    CHARACTERS.forEach((character, index) => {
+        console.log(`${index + 1}. ${character.NAME} (Speed: ${character.SPEED}, Handling: ${character.MANEUVERABILITY}, Power: ${character.POWER})`)
+    })
+    console.log("=============== Characters ===============\n");
+}
+
+async function choosePlayers() {
+    listCharacteres();
+    let player1;
+    let player2;
+
+    const readline = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    while (true) {
+        const choicePlayer1 = await new Promise((resolve) => {
+            readline.question('Enter number for Player 1: ', (input) => {
+                resolve(input);
+            });
+        });
+
+        const choicePlayer2 = await new Promise((resolve) => {
+            readline.question('Enter number for Player 2: ', (input) => {
+                resolve(input);
+            });
+        });
+
+        player1 = parseInt(choicePlayer1);
+        player2 = parseInt(choicePlayer2);
+        const isValid = Number.isInteger(player1) && Number.isInteger(player2)
+            && player1 > 0 && player1 <= CHARACTERS.length
+            && player2 > 0 && player2 <= CHARACTERS.length
+            && player1 !== player2
+
+        if (isValid) {
+            readline.close();
+            break;
+        }
+        console.log("Invalid selection. Choose two different valid numbers.");
+    }
+    const characterPlayer1 = CHARACTERS[player1];
+    const characterPlayer2 = CHARACTERS[player2];
+    console.log(`Selected: ${characterPlayer1.NAME} vs ${characterPlayer2.NAME}`)
+
+    return [player1, player2];
+}
+
+async function menu() {
+    console.log("\n=== Mario Racing Simulator ===");
+    console.log("1) Show characters");
+    console.log("2) Select players");
+    console.log("3) Start race");
+    console.log("0) Exit");
+}
+
 async function main() {
-    console.log(`🏁 Race starting between ${player1.NAME} and ${player2.NAME} 🏁`)
-    playRaceEngine(player1, player2)
+    let charactersSelecteds = null;
+    while (true) {
+        await menu();
+        const readline = require('readline').createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        var choice = await new Promise((resolve) => {
+            readline.question('Select an option: ', (input) => {
+                resolve(input);
+                readline.close();
+            });
+        });
+
+        if (choice == 0) {
+            console.clear();
+            console.log("Bye Bye!");
+            console.log("Was a pleasure to play with you !");
+            break;
+        }
+        else if (choice == 1) {
+            console.clear();
+            await listCharacteres();
+        }
+        else if (choice == 2) {
+            console.clear();
+            charactersSelecteds = await choosePlayers();
+        }
+        else if (choice == 3) {
+            console.clear();
+            // check if players are selected
+            if (!charactersSelecteds) {
+                console.log("\nPlease select players first !");
+                charactersSelecteds = await choosePlayers();
+            }
+
+            await playRaceEngine(CHARACTERS[charactersSelecteds[0]], CHARACTERS[charactersSelecteds[1]])
+        }
+        else {
+            console.clear();
+            console.log("\nInvalid option !");
+        }
+    }
 }
 
 main()
