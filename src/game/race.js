@@ -78,8 +78,6 @@ export async function playRaceEngine(racerOne, racerTwo) {
     } else if (totalSkillPlayer2 > totalSkillPlayer1) {
       console.log(`Round Winner: ${racerTwo.NAME}. \nAdd 1 point.`);
       racerTwo.SCORE++;
-    } else {
-      // tie - nothing for straight/curve
     }
 
     // small delay between rounds

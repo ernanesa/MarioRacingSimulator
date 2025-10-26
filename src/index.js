@@ -54,7 +54,7 @@ function menu() {
   console.log("\n" + `╔${border}╗`);
   console.log(`║  🏎️  Mario Racing Simulator          ║`);
   console.log(`╚${border}╝`);
-  console.log("\nEscolha uma opção:");
+  console.log("\nChoose an option:");
   console.log("  1) 👥  Show characters");
   console.log("  2) 🎮  Select players");
   console.log("  3) 🏁  Start race");
