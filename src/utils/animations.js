@@ -55,3 +55,11 @@ async function animateTrack(racerNameLeft, valueLeft, racerNameRight, valueRight
 }
 
 export { spinner, countdown, animateTrack, sleep, hideCursor, showCursor };
+
+process.on('exit', () => {
+  try { showCursor(); } catch { }
+});
+process.on('SIGINT', () => {
+  try { showCursor(); } catch { }
+  process.exit(0);
+});

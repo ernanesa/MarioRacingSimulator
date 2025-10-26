@@ -2,7 +2,7 @@ import CHARACTERS from './data/characters.js';
 import { playRaceEngine } from './game/race.js';
 import readline from 'node:readline';
 
-async function listCharacters() {
+function listCharacters() {
   console.log("\n=============== Characters ===============");
   CHARACTERS.forEach((character, characterIndex) => {
     console.log(`${characterIndex + 1}. ${character.NAME} (Speed: ${character.SPEED}, Handling: ${character.MANEUVERABILITY}, Power: ${character.POWER})`);
@@ -11,7 +11,7 @@ async function listCharacters() {
 }
 
 async function choosePlayers() {
-  await listCharacters();
+  listCharacters();
   let playerOneIndex;
   let playerTwoIndex;
 
@@ -49,7 +49,7 @@ async function choosePlayers() {
   return [playerOneIndex, playerTwoIndex];
 }
 
-async function menu() {
+function menu() {
   const border = "═".repeat(36);
   console.log("\n" + `╔${border}╗`);
   console.log(`║  🏎️  Mario Racing Simulator          ║`);
@@ -64,7 +64,7 @@ async function menu() {
 async function main() {
   let selectedPlayers = null;
   while (true) {
-    await menu();
+    menu();
     const readlineInterface = readline.createInterface({ input: process.stdin, output: process.stdout });
     const menuChoice = await new Promise((resolve) => {
       readlineInterface.question('Select an option: ', (input) => {
