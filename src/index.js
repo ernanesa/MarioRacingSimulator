@@ -42,12 +42,14 @@ async function logRollResult(characterName, block, diceResult, attribute) {
 
 async function playRaceEngine(character1, character2) {
     console.log(`🏁 Race starting between ${character1.NAME} and ${character2.NAME} 🏁`)
+    await countdown();
 
     for (let round = 1; round <= 5; round++) {
         console.log(`\n🏁 Round ${round} 🏁`)
 
         let block = await getRandomBlock();
         console.log(`Block: ${block}`)
+        await spinner('Rolling dice');
 
         let diceResult1 = await rollDice();
         let diceResult2 = await rollDice();
@@ -61,6 +63,7 @@ async function playRaceEngine(character1, character2) {
 
             await logRollResult(character1.NAME, blocks.STRAIGHT, diceResult1, character1.SPEED);
             await logRollResult(character2.NAME, blocks.STRAIGHT, diceResult2, character2.SPEED);
+            await animateTrack(character1.NAME, totalTestSkill1, character2.NAME, totalTestSkill2);
         }
         else if (block === blocks.CURVE) {
             totalTestSkill1 = diceResult1 + character1.MANEUVERABILITY;
@@ -68,15 +71,21 @@ async function playRaceEngine(character1, character2) {
 
             await logRollResult(character1.NAME, blocks.CURVE, diceResult1, character1.MANEUVERABILITY);
             await logRollResult(character2.NAME, blocks.CURVE, diceResult2, character2.MANEUVERABILITY);
+            await animateTrack(character1.NAME, totalTestSkill1, character2.NAME, totalTestSkill2);
         }
         else if (block === blocks.BATTLE) {
             let totalTestSkill1 = diceResult1 + character1.POWER;
             let totalTestSkill2 = diceResult2 + character2.POWER;
 
             console.log(`${character1.NAME} CONFRONTED ${character2.NAME}! 🥊`)
-
             await logRollResult(character1.NAME, blocks.POWER, diceResult1, character1.POWER);
             await logRollResult(character2.NAME, blocks.POWER, diceResult2, character2.POWER);
+
+            // quick battle visualization
+            await spinner('Clashing');
+            const visBattle1 = diceResult1 + character1.POWER;
+            const visBattle2 = diceResult2 + character2.POWER;
+            await animateTrack(character1.NAME, visBattle1, character2.NAME, visBattle2);
 
             if (totalTestSkill1 > totalTestSkill2) {
                 console.log(`Round Winner: ${character1.NAME}.`)
@@ -242,3 +251,56 @@ async function main() {
 
 main()
 
+const RL = require('readline');
+
+// small async utilities for console animations
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+const hideCursor = () => process.stdout.write('\x1B[?25l');
+const showCursor = () => process.stdout.write('\x1B[?25h');
+
+async function spinner(text, ms = 600, interval = 80) {
+    const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    const end = Date.now() + ms;
+    hideCursor();
+    let i = 0;
+    while (Date.now() < end) {
+        RL.clearLine(process.stdout, 0);
+        RL.cursorTo(process.stdout, 0);
+        process.stdout.write(`${text} ${frames[i % frames.length]}`);
+        i++;
+        await sleep(interval);
+    }
+    RL.clearLine(process.stdout, 0);
+    RL.cursorTo(process.stdout, 0);
+    showCursor();
+}
+
+async function countdown() {
+    hideCursor();
+    for (const t of ['3', '2', '1', 'GO!']) {
+        RL.clearLine(process.stdout, 0);
+        RL.cursorTo(process.stdout, 0);
+        process.stdout.write(`Starting in ${t}`);
+        await sleep(400);
+    }
+    RL.clearLine(process.stdout, 0);
+    RL.cursorTo(process.stdout, 0);
+    showCursor();
+}
+
+async function animateTrack(name1, v1, name2, v2, width = 20, frames = 18) {
+    hideCursor();
+    const max = Math.max(v1, v2, 1);
+    for (let f = 0; f <= frames; f++) {
+        const p1 = Math.round((v1 / max) * (f / frames) * width);
+        const p2 = Math.round((v2 / max) * (f / frames) * width);
+        RL.cursorTo(process.stdout, 0);
+        process.stdout.write(`${name1.padEnd(12)} |${'='.repeat(p1)}🚗${' '.repeat(Math.max(0, width - p1))}|\n`);
+        RL.cursorTo(process.stdout, 0);
+        process.stdout.write(`${name2.padEnd(12)} |${'='.repeat(p2)}🚗${' '.repeat(Math.max(0, width - p2))}|\n`);
+        await sleep(35);
+        RL.moveCursor(process.stdout, 0, -2);
+    }
+    RL.moveCursor(process.stdout, 0, 2);
+    showCursor();
+}
